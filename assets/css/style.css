@@ -1,0 +1,58 @@
+/* Roleta */
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #333;
+}
+.header-roleta {
+    padding: 40px;
+    color: #fff;
+    margin: 0 auto;
+    margin-bottom: 40px;
+}
+
+.header-roleta h1, p {
+    text-align: center;
+}
+
+.wheel {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+.wheel .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    box-shadow: 0px 14px 33px rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+}
+.center-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 60px;
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#winner {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.arrow {
+    position: absolute;
+    top: 50%;
+    right: -285%;
+    transform: translateY(-50%);
+}
+
+.arrow img {
+    width: 86px;
+    height: 85px;
+    object-fit: cover;
+}

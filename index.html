@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleta</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body style="font-family: 'Noto Sans', sans-serif;">
+    <div class="header-roleta">
+        <h1>Gire a roleta e ganhe prêmios</h1>
+        <p id="winner"></p>
+    </div>
+    <div class="wheel">
+        <canvas id="canvas" width="1200" height="1200" style="width: 600px; height: 600px;"></canvas>
+        <div class="center-circle" onclick="spin()">
+            <div class="logo">
+                
+            </div>
+            <div class="arrow">
+                <img src="assets/images/arrow.svg" alt="">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toRad(deg) {
+            return deg * (Math.PI / 180.0);
+        }
+
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = width / 2 - 20;
+
+        let items = [
+            "Caneca",
+            "Camiseta ",
+            "Chaveiro",
+            "Squeeze",
+            "Mochila",
+            "Porta-copos",
+            "Boné",
+            "Ecobag",
+            "Calendário",
+            "Adesivos",
+        ];
+
+        let currentDeg = 0;
+        let step = 360 / items.length;
+        let itemDegs = {};
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = '#7AC943';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 5, toRad(0), toRad(360));
+            ctx.stroke();
+
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 15, toRad(0), toRad(360));
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 20, toRad(0), toRad(360));
+            ctx.fillStyle = `rgb(255, 255, 255)`;
+            ctx.fill();
+
+            let startDeg = currentDeg;
+            for (let i = 0; i < items.length; i++, startDeg += step) {
+                let endDeg = startDeg + step;
+
+                let color;
+                if (i % 2 === 0) {
+                    color = '#006BDA';
+                } else {
+                    let gradient = ctx.createLinearGradient(centerX, centerY - radius, centerX, centerY + radius);
+                    gradient.addColorStop(0, '#FFCC0F');
+                    gradient.addColorStop(0.5, '#FE9115');
+                    gradient.addColorStop(1, '#FE7A18');
+                    color = gradient;
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius - 20, toRad(startDeg), toRad(endDeg));
+                ctx.fillStyle = color;
+                ctx.fill();
+
+                ctx.lineWidth = 10;
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.stroke(); 
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(toRad((startDeg + endDeg) / 2));
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#FFF";
+                ctx.font = '30px Noto Sans';
+                ctx.fillText(items[i], 250, 0);
+                ctx.restore();
+
+                itemDegs[items[i]] = {
+                    "startDeg": startDeg,
+                    "endDeg": endDeg
+                };
+
+                if (startDeg % 360 < 360 && startDeg % 360 > 270 && endDeg % 360 > 0 && endDeg % 360 < 90) {
+                    document.getElementById("winner").innerHTML = items[i];
+                }
+            }
+        }
+
+        let speed = 0;
+        let maxRotation = Math.random() * (360 * 6 - 360 * 3) + (360 * 3);
+        let pause = false;
+
+        function animate() {
+            if (pause) {
+                return;
+            }
+            speed = (1 - currentDeg / maxRotation) * 20;
+            if (speed < 0.01) {
+                speed = 0;
+                pause = true;
+            }
+            currentDeg += speed;
+            draw();
+            window.requestAnimationFrame(animate);
+        }
+
+        function spin() {
+            if (speed !== 0) {
+                return;
+            }
+            currentDeg = 0;
+            draw();
+            maxRotation = Math.random() * (360 * 6 - 360 * 3) + (360 * 3);
+            itemDegs = {};
+            pause = false;
+            window.requestAnimationFrame(animate);
+        }
+
+        draw();
+    </script>
+
+</body>
+
+</html>
